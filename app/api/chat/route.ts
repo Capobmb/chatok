@@ -24,7 +24,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const parsedBody = requestSchema.parse(body);
+    requestSchema.parse(body); // necesssary for validation
     
     // ランダムな遅延（1-2秒）を追加
     await delay(1000 + Math.random() * 1000);
