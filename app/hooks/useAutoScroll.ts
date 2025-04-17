@@ -1,8 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { Message } from "../types/chat";
 
-export const useAutoScroll = (dependencies: any[]) => {
+type AutoScrollDependencies = {
+  messages: Message[];
+  isTyping: boolean;
+};
+
+export const useAutoScroll = ({ messages, isTyping }: AutoScrollDependencies) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -11,7 +17,7 @@ export const useAutoScroll = (dependencies: any[]) => {
 
   useEffect(() => {
     scrollToBottom();
-  }, dependencies);
+  }, [messages, isTyping]);
 
   return { messagesEndRef };
 }; 

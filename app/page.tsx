@@ -12,7 +12,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const { messages, setMessages, clearMessages } = useMessagePersistence();
   const { typingText, isTyping, simulateTyping } = useTypingAnimation();
-  const { messagesEndRef } = useAutoScroll([messages, isTyping]);
+  const { messagesEndRef } = useAutoScroll({ messages, isTyping });
 
   // 表示用のメッセージ配列を作成（タイピング中のメッセージを含む）
   const displayMessages: Message[] = [...messages];
@@ -54,7 +54,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="max-w-4xl mx-auto p-4">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white">
-          ChatOK - The AI that only says "OK"
+          ChatOK
         </h1>
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-4 h-[60vh] overflow-y-auto">
