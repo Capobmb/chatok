@@ -1,46 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-
-type Message = {
-  role: "user" | "assistant";
-  content: string;
-};
+import { useState } from "react";
+import { useMessagePersistence } from "./hooks/useMessagePersistence";
+import { useTypingAnimation } from "./hooks/useTypingAnimation";
+import { ChatMessage } from "./components/ChatMessage";
 
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [typingText, setTypingText] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-
-  // ローカルストレージからメッセージを読み込む
-  useEffect(() => {
-    const savedMessages = localStorage.getItem("chatMessages");
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
-    }
-  }, []);
-
-  // メッセージが更新されたらローカルストレージに保存
-  useEffect(() => {
-    localStorage.setItem("chatMessages", JSON.stringify(messages));
-  }, [messages]);
-
-  // タイピングアニメーション
-  const simulateTyping = async (text: string) => {
-    setIsTyping(true);
-    setTypingText("");
-    
-    for (let i = 0; i <= text.length; i++) {
-      setTypingText(text.slice(0, i));
-      await new Promise(resolve => setTimeout(resolve, 50 + Math.random() * 50));
-    }
-    
-    setIsTyping(false);
-    return text;
-  };
+  const { messages, setMessages, clearMessages } = useMessagePersistence();
+  const { typingText, isTyping, simulateTyping } = useTypingAnimation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,20 +50,13 @@ export default function Home() {
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-4 h-[60vh] overflow-y-auto">
           {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`mb-4 p-3 rounded-lg ${
-                message.role === "user"
-                  ? "bg-blue-100 dark:bg-blue-900 ml-auto max-w-[80%]"
-                  : "bg-gray-100 dark:bg-gray-700 max-w-[80%]"
-              }`}
-            >
-              <p className="text-gray-800 dark:text-white">{message.content}</p>
-            </div>
+            <ChatMessage key={index} message={message} />
           ))}
           {isTyping && (
             <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg max-w-[80%]">
-              <p className="text-gray-800 dark:text-white">{typingText}<span className="animate-pulse">|</span></p>
+              <p className="text-gray-800 dark:text-white">
+                {typingText}<span className="animate-pulse">|</span>
+              </p>
             </div>
           )}
         </div>
@@ -119,10 +81,7 @@ export default function Home() {
 
         {messages.length > 0 && (
           <button
-            onClick={() => {
-              localStorage.removeItem("chatMessages");
-              setMessages([]);
-            }}
+            onClick={clearMessages}
             className="mt-4 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           >
             履歴をクリア
