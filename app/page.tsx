@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useMessagePersistence } from "./hooks/useMessagePersistence";
 import { useTypingAnimation } from "./hooks/useTypingAnimation";
+import { useAutoScroll } from "./hooks/useAutoScroll";
 import { ChatMessage } from "./components/ChatMessage";
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const { messages, setMessages, clearMessages } = useMessagePersistence();
   const { typingText, isTyping, simulateTyping } = useTypingAnimation();
+  const { messagesEndRef } = useAutoScroll([messages, isTyping]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +61,7 @@ export default function Home() {
               </p>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         <form onSubmit={handleSubmit} className="flex gap-2">
