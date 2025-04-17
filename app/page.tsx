@@ -5,7 +5,6 @@ import { useMessagePersistence } from "./hooks/useMessagePersistence";
 import { useTypingAnimation } from "./hooks/useTypingAnimation";
 import { useAutoScroll } from "./hooks/useAutoScroll";
 import { AnimatedMessage } from "./components/AnimatedMessage";
-import { TypingIndicator } from "./components/TypingIndicator";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -55,7 +54,13 @@ export default function Home() {
           {messages.map((message, index) => (
             <AnimatedMessage key={index} message={message} />
           ))}
-          {isTyping && <TypingIndicator text={typingText} />}
+          {isTyping && (
+            <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg max-w-[80%]">
+              <p className="text-gray-800 dark:text-white">
+                {typingText}<span className="animate-pulse">|</span>
+              </p>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 
