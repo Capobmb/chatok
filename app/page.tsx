@@ -5,6 +5,7 @@ import { useMessagePersistence } from "./hooks/useMessagePersistence";
 import { useTypingAnimation } from "./hooks/useTypingAnimation";
 import { useAutoScroll } from "./hooks/useAutoScroll";
 import { AnimatedMessage } from "./components/AnimatedMessage";
+import type { Message } from "./types/chat";
 
 export default function Home() {
   const [input, setInput] = useState("");
@@ -12,6 +13,12 @@ export default function Home() {
   const { messages, setMessages, clearMessages } = useMessagePersistence();
   const { typingText, isTyping, simulateTyping } = useTypingAnimation();
   const { messagesEndRef } = useAutoScroll([messages, isTyping]);
+
+  // 表示用のメッセージ配列を作成（タイピング中のメッセージを含む）
+  const displayMessages: Message[] = [...messages];
+  if (isTyping) {
+    displayMessages.push({ role: "assistant", content: typingText });
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,16 +58,13 @@ export default function Home() {
         </h1>
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 mb-4 h-[60vh] overflow-y-auto">
-          {messages.map((message, index) => (
-            <AnimatedMessage key={index} message={message} />
+          {displayMessages.map((message, index) => (
+            <AnimatedMessage
+              key={index}
+              message={message}
+              skipAnimation={isTyping && index === displayMessages.length - 1}
+            />
           ))}
-          {isTyping && (
-            <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg max-w-[80%]">
-              <p className="text-gray-800 dark:text-white">
-                {typingText}<span className="animate-pulse">|</span>
-              </p>
-            </div>
-          )}
           <div ref={messagesEndRef} />
         </div>
 

@@ -5,14 +5,17 @@ import type { Message } from "../types/chat";
 
 type Props = {
   message: Message;
+  skipAnimation?: boolean;
 };
 
-export const AnimatedMessage = ({ message }: Props) => {
-  const [isVisible, setIsVisible] = useState(false);
+export const AnimatedMessage = ({ message, skipAnimation = false }: Props) => {
+  const [isVisible, setIsVisible] = useState(skipAnimation);
 
   useEffect(() => {
-    setIsVisible(true);
-  }, []);
+    if (!skipAnimation) {
+      setIsVisible(true);
+    }
+  }, [skipAnimation]);
 
   return (
     <div
@@ -26,7 +29,10 @@ export const AnimatedMessage = ({ message }: Props) => {
           : "opacity-0 translate-y-4"
       }`}
     >
-      <p className="text-gray-800 dark:text-white">{message.content}</p>
+      <p className="text-gray-800 dark:text-white">
+        {message.content}
+        {skipAnimation && <span className="animate-pulse">|</span>}
+      </p>
     </div>
   );
 }; 
